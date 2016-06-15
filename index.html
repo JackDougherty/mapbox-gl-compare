@@ -1,65 +1,88 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset='utf-8' />
-    <title></title>
-    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.0/mapbox-gl.js'></script>
-    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.0/mapbox-gl.css' rel='stylesheet' />
-    <style>
-        body { margin:0; padding:0; }
-        #map { position:absolute; top:0; bottom:0; width:100%; }
-    </style>
+  <meta charset='utf-8' />
+  <title></title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.0/mapbox-gl.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.0/mapbox-gl.css' rel='stylesheet' />
+  <style>
+  body { margin:0; padding:0; }
+  #map { position:absolute; top:0; bottom:0; width:100%; }
+  </style>
 </head>
 <body>
 
-<script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.0.1/mapbox-gl-compare.js'></script>
-<link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.0.1/mapbox-gl-compare.css' type='text/css' />
-<style>
-body {
+  <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-supported/v0.0.1/mapbox-gl-supported.js'></script>
+
+  <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.0.1/mapbox-gl-compare.js'></script>
+  <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.0.1/mapbox-gl-compare.css' type='text/css' />
+  <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v1.1.0/mapbox-gl-geocoder.js'></script>
+  <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v1.1.0/mapbox-gl-geocoder.css' type='text/css' />
+  <style>
+  body {
     overflow: hidden;
-}
+  }
 
-body * {
-   -webkit-touch-callout: none;
-     -webkit-user-select: none;
-        -moz-user-select: none;
-         -ms-user-select: none;
-             user-select: none;
-}
+  body * {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
 
-.map {
+  .map {
     position: absolute;
     top: 0;
     bottom: 0;
     width: 100%;
-}
-</style>
+  }
+  </style>
 
-<div id='left' class='map'></div>
-<div id='right' class='map'></div>
+  <div id='left' class='map'></div>
+  <div id='right' class='map'></div>
 
-<script>
-mapboxgl.accessToken = 'pk.eyJ1IjoiamFja2RvdWdoZXJ0eSIsImEiOiJxMi11TGlzIn0.ydUTGpMKcADi7fKPxy0GVA';
-var left = new mapboxgl.Map({
-    container: 'left',
-    style: 'mapbox://styles/mapbox/light-v8',
-    center: [-72.69, 41.76],
-    zoom: 13,
-    hash: true  // updates page position in URL
-});
+  <script>
+  mapboxgl.accessToken = 'pk.eyJ1IjoiamFja2RvdWdoZXJ0eSIsImEiOiJxMi11TGlzIn0.ydUTGpMKcADi7fKPxy0GVA';
+  if (!mapboxgl.supported()) {
+    alert('Your browser does not support Mapbox GL');
+  } else {
 
-var right = new mapboxgl.Map({
-    container: 'right',
-    style: 'mapbox://styles/mapbox/dark-v8',
-    center: [-72.69, 41.76],
-    zoom: 13
-});
+    // set max bounds for Connecticut aerial map
+    var bounds = [
+      [-73.7045, 40.928], // Southwest coordinates
+      [-71.7517, 42.0493]  // Northeast coordinates
+    ];
 
-new mapboxgl.Compare(left, right);
+    var left = new mapboxgl.Map({
+      container: 'left',
+      style: 'mapbox://styles/mapbox/light-v8',
+      center: [-72.69, 41.76],
+      zoom: 13,
+      maxBounds: bounds,
+      hash: true  // updates page position in URL
+    });
 
-left.addControl(new mapboxgl.Navigation({position: 'top-left'}));
-</script>
+    var right = new mapboxgl.Map({
+      container: 'right',
+      style: 'mapbox://styles/mapbox/satellite-v8',
+      center: [-72.69, 41.76],
+      maxBounds: bounds,
+      zoom: 13
+    });
+
+    // disable map zoom when using scroll
+    left.scrollZoom.disable();
+    right.scrollZoom.disable();
+
+    new mapboxgl.Compare(left, right);
+
+    left.addControl(new mapboxgl.Geocoder({position: 'top-left'}));
+    left.addControl(new mapboxgl.Navigation({position: 'top-left'}));
+
+  } // end of else statement
+  </script>
 
 </body>
 </html>
