@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8' />
+  <title></title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.0/mapbox-gl.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.0/mapbox-gl.css' rel='stylesheet' />
+  <style>
+  body { margin:0; padding:0; }
+  #map { position:absolute; top:0; bottom:0; width:100%; }
+  </style>
+</head>
+<body>
+
+  <div id='map'></div>
+  <script>
+  mapboxgl.accessToken = 'pk.eyJ1IjoiamFja2RvdWdoZXJ0eSIsImEiOiJxMi11TGlzIn0.ydUTGpMKcADi7fKPxy0GVA';
+
+  var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/light-v8',
+    center: [-72.69, 41.76], // starting position
+    zoom: 9 // starting zoom
+  });
+
+  // based on https://github.com/mapbox/mapbox-gl-js/pull/2612
+  // https://github.com/mapbox/mapbox-gl-js/pull/2612/commits/b6797c7568f8ac89955b7839cd20cccc567dac03
+  map.on('load', function() {
+    map.addSource('wms-test', {
+      "type": "raster",
+      // "tiles": ['http://geodata.state.nj.us/imagerywms/Natural2015?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.1.1&request=GetMap&srs=EPSG:3857&width=256&height=256&layers=Natural2015'],
+      // "tiles": ['http://geoserver.lib.uconn.edu:8080/geoserver/MAGIC/wms?service=WMS&version=1.1.0&request=GetMap&layers=MAGIC:1934%20Connecticut%20Aerial%20Photography&styles=&bbox=-73.75439914014946,40.929208483300386,-71.72770018802974,42.06032257256779&width=768&height=428&srs=EPSG:4326&format=image%2Fpng'],
+      "tiles": ['http://geoserver.lib.uconn.edu:8080/geoserver/MAGIC/wms?bbox={bbox-epsg-4326}&format=image/png&service=WMS&version=1.1.0&request=GetMap&srs=EPSG:4326&width=768&height=428&layers=MAGIC:1934%20Connecticut%20Aerial%20Photography'],
+      "tileSize": 256
+    });
+
+    map.addLayer({
+      "id": "wms-test-layer",
+      "type": "raster",
+      "source": "wms-test",
+      "paint": {}
+    });
+  });
+
+  // tileLayer.WMS as a baselayer - see http://leafletjs.com/reference.html#tilelayer-wms
+  // UConn MAGIC WMS settings - see http://geoserver.lib.uconn.edu:8080/geoserver/web/?wicket:bookmarkablePage=:org.geoserver.web.demo.MapPreviewPage
+  // var aerial1934 = new L.tileLayer.wms("http://geoserver.lib.uconn.edu:8080/geoserver/MAGIC/wms?", {
+  //   layers: 'MAGIC:1934 Connecticut Aerial Photography',
+  //   format: 'image/png',
+  //   version: '1.1.0',
+  //   transparent: true,
+  //   attribution: '1934 <a href="http://magic.library.uconn.edu">MAGIC UConn</a> and <a href="http://cslib.org">CSL</a>'
+  // }).addTo(map);
+  </script>
+
+</body>
+</html>
